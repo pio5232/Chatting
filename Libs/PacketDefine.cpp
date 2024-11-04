@@ -19,3 +19,9 @@ serializationBuffer& operator<<(serializationBuffer& serialBuffer, C_Network::Ch
 	return serialBuffer;
 	// TODO: 여기에 return 문을 삽입합니다.
 }
+
+serializationBuffer& operator<<(serializationBuffer& serialBuffer, C_Network::LogInRequestPacket& chattingPacket)
+{
+	// TODO: 여기에 return 문을 삽입합니다.
+	return serialBuffer;
+}

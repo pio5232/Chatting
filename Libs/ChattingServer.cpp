@@ -29,6 +29,7 @@ void C_Network::ChattingServer::OnConnected(const SOCKADDR_IN& clientInfo, ULONG
 
 void C_Network::ChattingServer::OnDisconnected(ULONGLONG sessionId)
 {
+	// TODO : 해당 세션의 user Id 를 찾아서 데이터 저장 및 제거 필요.
 }
 
 void C_Network::ChattingServer::OnError(int errCode, WCHAR* cause)

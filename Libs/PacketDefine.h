@@ -55,6 +55,7 @@ namespace C_Network
 		//uint16 type; // EchoServer를 테스트할 때는 type이 없다.
 	};
 
+	// Request
 	struct EchoPacket : public PacketHeader
 	{
 	public:
@@ -78,7 +79,25 @@ namespace C_Network
 		uint16 messageLen = 0;
 		char payLoad[0];
 	};
+	
+	// 암호화.. 복호화?
+	struct LogInRequestPacket : public PacketHeader
+	{
+		ULONGLONG logInId;
+		ULONGLONG logInPw;
+	};
 
+	struct LogOutRequestPacket : public PacketHeader
+	{
+
+	};
+
+	struct EnterRoomRequestPacket : public PacketHeader
+	{
+
+	};
+
+	// Response
 	struct ChatUserResponsePacket : public PacketHeader
 	{
 	public:
@@ -88,27 +107,13 @@ namespace C_Network
 		char payLoad[0];
 	};
 
-	struct LogInRequestPacket : public PacketHeader
-	{
-
-	};
 
 	struct LogInResponsePacket : public PacketHeader
 	{
-
-	};
-
-	struct LogOutRequestPacket : public PacketHeader
-	{
-
+		ULONGLONG userId;
 	};
 
 	struct LogOutResponsePacket : public PacketHeader
-	{
-
-	};
-
-	struct EnterRoomRequestPacket : public PacketHeader
 	{
 
 	};
@@ -122,4 +127,6 @@ namespace C_Network
 serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::EchoPacket& echoPacket);
 
 serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserResponsePacket& chattingPacket);
+
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::LogInRequestPacket& logInPacket);
 //serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserRequestPacket& chattingPacket);

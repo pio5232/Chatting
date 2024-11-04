@@ -55,6 +55,8 @@ namespace C_Network
 
 		static C_Network::NetworkErrorCode ProcessChatToUserPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
 
+		static C_Network::NetworkErrorCode ProcessLogInPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
+
 	private:
 		static std::unordered_map<uint16, PacketFunc> packetFuncs;
 		//static class NetworkBase* _owner;

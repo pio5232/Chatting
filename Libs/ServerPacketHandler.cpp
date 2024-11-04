@@ -28,25 +28,26 @@ C_Network::NetworkErrorCode C_Network::ServerPacketHandler::ProcessPacket(uint16
 
 C_Network::NetworkErrorCode C_Network::ServerPacketHandler::ProcessChatToUserPacket(C_Utility::CSerializationBuffer& buffer)
 {
-	uint16 messageLen;
+	//uint16 messageLen;
 
-	buffer >> messageLen;
+	//buffer >> messageLen;
 
-	// TODO : NEW -> POOL
-	ChatUserResponsePacket* chatPacket = static_cast<ChatUserResponsePacket*>(malloc(sizeof(ChatUserResponsePacket) + messageLen));
+	//// TODO : NEW -> POOL
+	//ChatUserResponsePacket* chatPacket = static_cast<ChatUserResponsePacket*>(malloc(sizeof(ChatUserResponsePacket) + messageLen));
 
-	if (!chatPacket)
-		return C_Network::NetworkErrorCode::MESSAGE_SEND_FAILED;
+	//if (!chatPacket)
+	//	return C_Network::NetworkErrorCode::MESSAGE_SEND_FAILED;
 
-	chatPacket->size = messageLen + sizeof(chatPacket->messageLen);
-	chatPacket->messageLen = messageLen;
-	buffer.GetData(chatPacket->payLoad, messageLen);
+	//chatPacket->size = messageLen + sizeof(chatPacket->messageLen);
+	//chatPacket->messageLen = messageLen;
+	//buffer.GetData(chatPacket->payLoad, messageLen);
 
-	SharedSendBuffer sendBuffer = MakePacket(CHAT_TO_USER_RESPONSE_PACKET, *chatPacket);
+	//SharedSendBuffer sendBuffer = MakePacket(CHAT_TO_USER_RESPONSE_PACKET, *chatPacket);
 
-	C_Network::NetworkErrorCode result = _owner->SendToRoom(sendBuffer, -1);
+	//C_Network::NetworkErrorCode result = _owner->SendToRoom(sendBuffer, -1);
 
-	// TODO : 沥惑 贸府
+	//// TODO : 沥惑 贸府
 
-	return result;
+	//return result;
+	return C_Network::NetworkErrorCode::NONE;
 }
