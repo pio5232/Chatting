@@ -122,11 +122,11 @@ namespace C_Network
 	{
 	public:
 		SessionManager(uint maxSessionCnt);
-		~SessionManager();
+		virtual ~SessionManager() = 0;
 		Session* AddSession(SOCKET sock, SOCKADDR_IN* pSockAddr);
-		ULONG GetCurSessionCount() { return _curSessionCnt; }
+		uint GetCurSessionCount() const { return _curSessionCnt; } // 현재 접속한 세션 수
 		void DeleteSession(Session* sessionPtr);
-
+		
 		Session* GetSession(ULONGLONG sessionId); // sessionId로 session을 찾는다.
 
 		bool IsFull() 
@@ -136,8 +136,7 @@ namespace C_Network
 		}
 
 
-	private:
-
+	protected:
 		// Accept에서는 차지 않았다가 차는 경우가 존재하지 않는다.
 		uint GetAvailableIndex();
 		// [ Server - User Count / Client - Dummy Count], <id, index>
@@ -152,6 +151,20 @@ namespace C_Network
 		uint _maxSessionCnt;
 
 		volatile ULONG _curSessionCnt;
-		
+	};
+	class ServerSessionManager : public SessionManager
+	{
+	public: ServerSessionManager(uint maxSessionCnt) : SessionManager(maxSessionCnt) {}
+		  ~ServerSessionManager() {}
+	};
+
+	class ClientSessionManager : public SessionManager
+	{
+	public: ClientSessionManager(uint maxSessionCnt) : SessionManager(maxSessionCnt) {}
+		  ~ClientSessionManager() {}
+
+		  uint GetMaxSessionCount() { return _maxSessionCnt; }
+		  void DeleteAllSession();
+
 	};
 }

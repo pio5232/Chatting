@@ -10,6 +10,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{6c2d83f5-c904-4feb-b5a6-d20d4cf378fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Contents">
+      <UniqueIdentifier>{2117b99a-b2aa-45c5-8d4e-53ccf3db3ba5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LibsPch.cpp">
@@ -39,27 +42,48 @@
     <ClCompile Include="Session.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="ChattingServer.cpp" />
     <ClCompile Include="NetworkUtils.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="EchoServer.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="ClientPacketHandler.cpp" />
     <ClCompile Include="CRingBuffer.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
     <ClCompile Include="CSerializationBuffer.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="Room.cpp" />
-    <ClCompile Include="RoomManager.cpp" />
-    <ClCompile Include="User.cpp" />
     <ClCompile Include="PacketDefine.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="UserManager.cpp" />
+    <ClCompile Include="UserManager.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="ChattingClient.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="ChattingServer.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="EchoServer.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientPacketHandler.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
+    <ClCompile Include="CMonitor.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="ServerPacketHandler.cpp">
+      <Filter>Contents</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LibsPch.h">
@@ -92,29 +116,50 @@
     <ClInclude Include="Session.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="ChattingServer.h" />
     <ClInclude Include="NetworkUtils.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="PacketDefine.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="EchoServer.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientPacketHandler.h" />
     <ClInclude Include="CRingBuffer.h">
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="CSerializationBuffer.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="Room.h" />
-    <ClInclude Include="RoomManager.h" />
     <ClInclude Include="NetworkErrorCode.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="User.h" />
-    <ClInclude Include="UserManager.h" />
+    <ClInclude Include="UserManager.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="ChattingClient.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="ChattingServer.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="EchoServer.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientPacketHandler.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
+    <ClInclude Include="CMonitor.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ServerPacketHandler.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

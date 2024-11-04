@@ -2,7 +2,7 @@
 #include "RoomManager.h"
 #include "NetworkBase.h"
 
-C_Network::RoomManager::RoomManager(C_Network::NetworkBase* owner, uint maxRoomCount, uint maxRoomUserCnt) : _owner(owner), _maxRoomUserCnt(maxRoomUserCnt)
+C_Network::RoomManager::RoomManager(C_Network::ServerBase* owner, uint maxRoomCount, uint maxRoomUserCnt) : _owner(owner), _maxRoomUserCnt(maxRoomUserCnt)
 {
 	_roomList.reserve(maxRoomCount);
 

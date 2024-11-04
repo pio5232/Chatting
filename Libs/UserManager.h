@@ -9,7 +9,6 @@ namespace C_Network
 		UserManager(uint maxSessionCnt);
 		~UserManager();
 
-
 	private:
 
 		// Accept에서는 차지 않았다가 차는 경우가 존재하지 않는다.
@@ -25,6 +24,5 @@ namespace C_Network
 
 		volatile ULONG _curSessionCnt;
 
-	};
 	};
 }

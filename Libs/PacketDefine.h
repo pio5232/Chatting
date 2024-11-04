@@ -52,7 +52,6 @@ namespace C_Network
 		//void SetSize(uint16 headerSize) { size = headerSize; }
 		uint16 size;
 
-
 		//uint16 type; // EchoServer를 테스트할 때는 type이 없다.
 	};
 
@@ -122,4 +121,5 @@ namespace C_Network
 // Packet 정의할 때 패킷에 맞는 직렬화버퍼 << operator를 정의해줘야한다.
 serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::EchoPacket& echoPacket);
 
-serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatRoomRequestPacket& chattingPacket);
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserResponsePacket& chattingPacket);
+//serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserRequestPacket& chattingPacket);

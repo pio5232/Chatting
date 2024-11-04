@@ -2,7 +2,7 @@
 #include "ClientPacketHandler.h"
 #include "EchoServer.h"
 
-C_Network::EchoServer::EchoServer(const NetAddress& netAddr, uint maxSessionCnt) : NetServer(netAddr, maxSessionCnt) 
+C_Network::EchoServer::EchoServer(const NetAddress& netAddr, uint maxSessionCnt) : ServerBase(netAddr, maxSessionCnt) 
 {
 }
 
@@ -33,13 +33,11 @@ void C_Network::EchoServer::OnRecv(C_Utility::CSerializationBuffer& buffer, ULON
 	// TODO : Check PacketHeader (정의된 패킷 헤더가 맞는지) 
 
 	// 알맞게 온 Packet에 대한 처리.
-	SharedSendBuffer sendBuffer = C_Network::ClientPacketHandler::ProcessPacket(sessionId, type, buffer);
-	if (!sendBuffer)
-		TODO_LOG; // Failed Log
+	if (C_Network::ClientPacketHandler::ProcessPacket(sessionId, type, buffer) != C_Network::NetworkErrorCode::NONE)
+		TODO_LOG_ERROR;
 
-	Send(sessionId, sendBuffer);
-
-		// TODO_LOG;
+	return;
+	// TODO_LOG;
 }
 
 void C_Network::EchoServer::InitHandler()

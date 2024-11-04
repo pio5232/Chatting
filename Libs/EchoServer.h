@@ -7,7 +7,7 @@ namespace C_Network
 	/*--------------------------
 			EchoServer
 	--------------------------*/
-	class EchoServer : public NetServer
+	class EchoServer : public ServerBase
 	{
 	public:
 		EchoServer(const NetAddress& netAddr, uint maxSessionCnt);

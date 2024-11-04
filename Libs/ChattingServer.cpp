@@ -1,7 +1,7 @@
 #include "LibsPch.h"
 #include "ChattingServer.h"
 
-C_Network::ChattingServer::ChattingServer(const NetAddress& netAddr, uint maxSessionCnt) : NetServer(netAddr, maxSessionCnt)
+C_Network::ChattingServer::ChattingServer(const NetAddress& netAddr, uint maxSessionCnt) : ServerBase(netAddr, maxSessionCnt)
 {
 	ClientPacketHandler::Init(this);
 	const uint roomCnt = 20;
@@ -11,6 +11,7 @@ C_Network::ChattingServer::ChattingServer(const NetAddress& netAddr, uint maxSes
 		++maxRoomUserCnt;
 	
 	_roomMgr = std::make_unique<RoomManager>(this, roomCnt, maxRoomUserCnt);
+	_userMgr = std::make_unique<UserManager>(maxSessionCnt);
 }
 
 C_Network::ChattingServer::~ChattingServer()

@@ -6,7 +6,7 @@ namespace C_Network
 	class Room
 	{
 	public :
-		Room(class NetworkBase* owner, int maxUserCnt);
+		Room(class ServerBase* owner, int maxUserCnt);
 
 		void EnterRoom(ULONGLONG userId);
 		void LeaveRoom(ULONGLONG userId);
@@ -20,6 +20,6 @@ namespace C_Network
 
 		std::vector<User*> _userList;
 		
-		class NetworkBase* _owner;
+		class ServerBase* _owner;
 	};
 }

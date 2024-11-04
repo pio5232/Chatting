@@ -9,7 +9,7 @@ serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::E
 	return serialBuffer;
 }
 
-serializationBuffer& operator<<(serializationBuffer& serialBuffer, C_Network::ChatRoomRequestPacket& chattingPacket)
+serializationBuffer& operator<<(serializationBuffer& serialBuffer, C_Network::ChatUserResponsePacket& chattingPacket)
 {
 	serialBuffer << chattingPacket.size << chattingPacket.messageLen;
 

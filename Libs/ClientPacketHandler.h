@@ -15,7 +15,6 @@ namespace C_Network
 		//, uint16) > ; // sessionId, Message 내용 버퍼, Message 크기.
 		using PacketFunc = C_Network::NetworkErrorCode(*)(ULONGLONG, C_Utility::CSerializationBuffer&);//std::function<bool(ULONGLONG, char*)>;
 
-
 		static void Init(class EchoServer* owner);
 		static void Init(class ChattingServer* owner);
 
@@ -56,12 +55,13 @@ namespace C_Network
 
 		static C_Network::NetworkErrorCode ProcessChatToUserPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
 
-		static C_Network::NetworkErrorCode ProcessChatToUserPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
-
 	private:
 		static std::unordered_map<uint16, PacketFunc> packetFuncs;
 		//static class NetworkBase* _owner;
+
+		// 테스트 끝나고 echoServer 삭제 필요.
 		static class EchoServer* _echoOwner;
-		static class ChattingServer* _chattingOwner;
+
+		static class ChattingServer* _owner;
 	};
 }

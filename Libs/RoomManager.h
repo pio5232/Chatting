@@ -7,7 +7,7 @@ namespace C_Network
 	class RoomManager
 	{
 	public:
-		RoomManager(class NetworkBase* owner, uint maxRoomCount, uint maxRoomUserCnt);
+		RoomManager(class ServerBase* owner, uint maxRoomCount, uint maxRoomUserCnt);
 		~RoomManager();
 
 		NetworkErrorCode SendToAllUser(C_Utility::CSerializationBuffer& buffer);
@@ -17,6 +17,6 @@ namespace C_Network
 		const uint _maxRoomUserCnt; // room당 최대 user 수
 		std::vector<Room*> _roomList;
 
-		NetworkBase* _owner;
+		ServerBase* _owner;
 	};
 }

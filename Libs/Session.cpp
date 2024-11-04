@@ -326,11 +326,11 @@ C_Network::SessionManager::~SessionManager()
 }
 
 C_Network::Session* C_Network::SessionManager::AddSession(SOCKET sock, SOCKADDR_IN* pSockAddr)
-{
+{   
 	// accept의 경우 꽉 찼을 때는 받지 않기 때문에. 꽉 찼을 경우를 생각할 필요는 없다.
 	uint idx = GetAvailableIndex();
 	
-	Session* newSession = _sessionArr[idx];
+	C_Network::Session* newSession = _sessionArr[idx];
 
 	newSession->Init(sock, pSockAddr);
 
@@ -360,7 +360,8 @@ void C_Network::SessionManager::DeleteSession(Session* sessionPtr)
 	closesocket(_sessionArr[arrIdx]->GetSock());
 	//if (_sessionArr[arrIdx]->_sendEvent._pendingBuffs.size() > 0)
 	//	DebugBreak();
-	_sessionArr[arrIdx]->_sendEvent._pendingBuffs.clear();
+	//_sessionArr[arrIdx]->_sendEvent._pendingBuffs.clear();
+	
 	{
 		SRWLockGuard lockGuard(&_indexListLock);
 		_availableSessionidxList.push(arrIdx);
@@ -390,4 +391,13 @@ uint C_Network::SessionManager::GetAvailableIndex()
 	_availableSessionidxList.pop();
 
 	return idx;
+}
+
+// Client에서는 재연결하지 않기 때문에 
+void C_Network::ClientSessionManager::DeleteAllSession()
+{
+	for (C_Network::Session* session : _sessionArr)
+	{
+		DeleteSession(session);
+	}
 }

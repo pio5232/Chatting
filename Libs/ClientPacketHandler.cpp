@@ -7,7 +7,7 @@
 ---------------------------------------*/
 std::unordered_map<uint16, C_Network::ClientPacketHandler::PacketFunc> C_Network::ClientPacketHandler::packetFuncs;
 C_Network::EchoServer* C_Network::ClientPacketHandler::_echoOwner = nullptr;
-C_Network::ChattingServer* C_Network::ClientPacketHandler::_chattingOwner = nullptr;
+C_Network::ChattingServer* C_Network::ClientPacketHandler::_owner = nullptr;
 
 void C_Network::ClientPacketHandler::Init(C_Network::EchoServer* owner) 
 {
@@ -19,7 +19,7 @@ void C_Network::ClientPacketHandler::Init(C_Network::EchoServer* owner)
 }
 void C_Network::ClientPacketHandler::Init(C_Network::ChattingServer* owner)
 {
-	_chattingOwner = owner;
+	_owner = owner;
 
 	packetFuncs.clear();
 	packetFuncs[CHAT_TO_ROOM_REQUEST_PACKET] = ClientPacketHandler::ProcessChatToRoomPacket; // Chat To Room Users
@@ -68,7 +68,7 @@ C_Network::NetworkErrorCode C_Network::ClientPacketHandler::ProcessChatToRoomPac
 	
 	SharedSendBuffer sendBuffer = MakePacket(CHAT_TO_USER_RESPONSE_PACKET, *chatPacket);
 	
-	C_Network::NetworkErrorCode result = _chattingOwner->SendToAllUser(sendBuffer);
+	C_Network::NetworkErrorCode result = _owner->SendToAllUser(sendBuffer);
 
 	// TODO : 沥惑 贸府
 
@@ -82,7 +82,7 @@ C_Network::NetworkErrorCode C_Network::ClientPacketHandler::ProcessChatToUserPac
 	buffer >> messageLen;
 
 	// TODO : NEW -> POOL
-	ChatRoomRequestPacket* chatPacket = static_cast<ChatRoomRequestPacket*>(malloc(sizeof(ChatRoomRequestPacket) + messageLen));
+	ChatUserResponsePacket* chatPacket = static_cast<ChatUserResponsePacket*>(malloc(sizeof(ChatUserResponsePacket) + messageLen));
 
 	if (!chatPacket)
 		return C_Network::NetworkErrorCode::MESSAGE_SEND_FAILED;
@@ -91,9 +91,9 @@ C_Network::NetworkErrorCode C_Network::ClientPacketHandler::ProcessChatToUserPac
 	chatPacket->messageLen = messageLen;
 	buffer.GetData(chatPacket->payLoad, messageLen);
 
-	SharedSendBuffer sendBuffer = MakePacket(chat_to_, *chatPacket);
+	SharedSendBuffer sendBuffer = MakePacket(CHAT_TO_USER_RESPONSE_PACKET, *chatPacket);
 
-	C_Network::NetworkErrorCode result = _chattingOwner->SendToRoom(sendBuffer, -1);
+	C_Network::NetworkErrorCode result = _owner->SendToRoom(sendBuffer, -1);
 
 	// TODO : 沥惑 贸府
 

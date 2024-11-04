@@ -3,10 +3,11 @@
 #include "NetworkBase.h"
 #include "NetworkUtils.h"
 #include "ClientPacketHandler.h"
+#include "UserManager.h"
 
 namespace C_Network
 {
-	class ChattingServer : public NetServer
+	class ChattingServer : public ServerBase
 	{
 	public:
 		ChattingServer(const NetAddress& netAddr, uint maxSessionCnt);
@@ -23,5 +24,6 @@ namespace C_Network
 
 	private:
 		std::unique_ptr<RoomManager> _roomMgr;
+		std::unique_ptr<UserManager> _userMgr;
 	};
 }
