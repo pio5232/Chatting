@@ -24,7 +24,7 @@ namespace C_Network
 		RECV_BUF_DEQUE_FAILED, // 절대 일어나면 안되는 에러. 발생했을 때는 링버퍼 설계를 확인해야함.
 
 		SEND_LEN_ZERO = 300, // 0 Byte Send
-		MESSAGE_SEND_FAILED,// 메시지가 SEND 실패했다.. 
+		MESSAGE_SEND_FAILED_MEMORY,// 메시지가 SEND 실패했다..  malloc / new가 실패했을 때 발생.
 
 		//
 

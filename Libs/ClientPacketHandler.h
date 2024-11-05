@@ -15,7 +15,6 @@ namespace C_Network
 		//, uint16) > ; // sessionId, Message 내용 버퍼, Message 크기.
 		using PacketFunc = C_Network::NetworkErrorCode(*)(ULONGLONG, C_Utility::CSerializationBuffer&);//std::function<bool(ULONGLONG, char*)>;
 
-		static void Init(class EchoServer* owner);
 		static void Init(class ChattingServer* owner);
 
 		// 직렬화 버퍼에 데이터를 채우자! 가변 템플릿을 활용.
@@ -31,36 +30,14 @@ namespace C_Network
 			return sendBuffer;
 		}
 
-		// 주의할 점 : CSerializationBuffer에 대한 Operator가 정의되어 있지 않은 경우에는 정의해줘야한다.!! 
-		// 사용자 정의 자료형의 경우에는 따로 Contents에서 오버로딩을 할 수 있게 설정해놓자.
-		//template <typename T, typename... Types>
-		//static void SetPacket(SharedSendBuffer& bufferRef, T t, Types... args)
-		//{
-		//	*bufferRef << t;
-		//	SetPacket(bufferRef, args...);
-		//}
-
-		//template <typename T>
-		//static void SetPacket(SharedSendBuffer& bufferRef, T t)
-		//{
-		//	*bufferRef << t;
-		//}
-
-		// processPacket -> packet 처리
 		static C_Network::NetworkErrorCode ProcessPacket(ULONGLONG sessionId, uint16 packetType, C_Utility::CSerializationBuffer& buffer);
 
-		static C_Network::NetworkErrorCode ProcessEchoPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
-
+		static C_Network::NetworkErrorCode ProcessLogInPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
 		static C_Network::NetworkErrorCode ProcessChatToRoomPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
-
 		static C_Network::NetworkErrorCode ProcessChatToUserPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
 
 	private:
 		static std::unordered_map<uint16, PacketFunc> packetFuncs;
-		//static class NetworkBase* _owner;
-
-		// 테스트 끝나고 echoServer 삭제 필요.
-		static class EchoServer* _echoOwner;
 
 		static class ChattingServer* _owner;
 	};

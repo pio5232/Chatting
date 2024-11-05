@@ -45,12 +45,12 @@ namespace C_Utility
 		CSerializationBuffer& operator<<(unsigned long ulValue);
 		CSerializationBuffer& operator<<(long lValue);
 
-		//CSerializationBuffer& operator<< (long long llValue);
-		//CSerializationBuffer& operator<< (unsigned long long ullValue);
+		CSerializationBuffer& operator<< (long long llValue);
+		CSerializationBuffer& operator<< (unsigned long long ullValue);
 
 		CSerializationBuffer& operator<< (float fValue);
 
-		CSerializationBuffer& operator<< (__int64 llValue);
+		//CSerializationBuffer& operator<< (__int64 llValue);
 		CSerializationBuffer& operator<< (double dValue);
 
 		CSerializationBuffer& operator>>(unsigned char& ucValue);
@@ -67,11 +67,11 @@ namespace C_Utility
 		
 		CSerializationBuffer& operator>> (float& fValue);
 
-		CSerializationBuffer& operator>> (__int64& llValue);
+		//CSerializationBuffer& operator>> (__int64& llValue);
 		CSerializationBuffer& operator>> (double& dValue);
 
-		//CSerializationBuffer& operator>> (long long llValue);
-		//CSerializationBuffer& operator>> (unsigned long long ullValue);
+		CSerializationBuffer& operator>> (unsigned long long ullValue);
+		CSerializationBuffer& operator>> (long long llValue);
 
 		// 버퍼 포인터 얻기
 		char* GetRearPtr() const;

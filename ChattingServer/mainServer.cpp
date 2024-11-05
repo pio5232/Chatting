@@ -4,16 +4,16 @@
 #include "CCrashDump.h"
 #include <thread>
 #include <chrono>
-#include "EchoServer.h"
+#include "ChattingServer.h"
 #include <conio.h>
 
 using namespace C_Network;
-EchoServer server(NetAddress(std::wstring(L"127.0.0.1"),ServerPort),3000);
+ChattingServer server(NetAddress(std::wstring(L"127.0.0.1"),ServerPort),3000);
 
 int main()
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	server.InitHandler();
+	ClientPacketHandler::Init(&server);
 
 	if (server.Begin() != C_Network::NetworkErrorCode::NONE)
 	{

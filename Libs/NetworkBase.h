@@ -70,7 +70,7 @@ namespace C_Network
 	public:
 		// Dummy Or 1 Client
 		// Dummy에서는 연결 재연결을 반복하는 형태로 만들지 않았음.
-		ClientBase(const NetAddress& targetEndPoint); 
+		ClientBase(const NetAddress& targetEndPoint, uint maxSessionCnt);
 		virtual ~ClientBase() = 0;
 
 		C_Network::NetworkErrorCode Init(); // 소켓 초기화

@@ -51,25 +51,19 @@ namespace C_Network
 	public:
 		//void SetSize(uint16 headerSize) { size = headerSize; }
 		uint16 size;
-
-		//uint16 type; // EchoServer를 테스트할 때는 type이 없다.
+		uint16 type; 
 	};
 
+	// ECHO REQUEST / RESPONSE
 	struct EchoPacket : public PacketHeader
 	{
 	public:
-		EchoPacket() : data(0) { size = sizeof(__int64); }
+		EchoPacket() : data(0) { size = sizeof(__int64), type = ECHO_PACKET; }
 		__int64 data;
 	};
 
-	struct ChatRoomRequestPacket : public PacketHeader
-	{
-		// TODO : 수정
-	public:
-		uint16 messageLen = 0;
-		uint16 roomNum = -1; // -1 => 전체 채팅, roomNum -> 해당 room에만 전송.
-		char payLoad[0];
-	};
+	// CHAT 
+
 	struct ChatUserRequestPacket : public PacketHeader
 	{
 	public:
@@ -78,7 +72,15 @@ namespace C_Network
 		uint16 messageLen = 0;
 		char payLoad[0];
 	};
-
+	struct ChatRoomRequestPacket : public PacketHeader
+	{
+		// TODO : 수정
+	public:
+		uint16 roomNum = -1; // -1 => 전체 채팅, roomNum -> 해당 room에만 전송.
+		uint16 messageLen = 0;
+		char payLoad[0];
+	};
+	
 	struct ChatUserResponsePacket : public PacketHeader
 	{
 	public:
@@ -88,38 +90,64 @@ namespace C_Network
 		char payLoad[0];
 	};
 
-	struct LogInRequestPacket : public PacketHeader
+	// LOG_IN
+	// 암호화.. 복호화?
+	struct alignas (32) LogInRequestPacket : public PacketHeader
 	{
-
+		ULONGLONG logInId;
+		ULONGLONG logInPw;
 	};
 
-	struct LogInResponsePacket : public PacketHeader
+	struct alignas (16) LogInResponsePacket : public PacketHeader
 	{
-
+		ULONGLONG userId;
 	};
 
+	// LOG_OUT
 	struct LogOutRequestPacket : public PacketHeader
 	{
 
 	};
-
 	struct LogOutResponsePacket : public PacketHeader
 	{
 
 	};
 
+	// ENTER_ROOM
 	struct EnterRoomRequestPacket : public PacketHeader
 	{
 
 	};
+	struct EnterRoomResponsePacket : public PacketHeader
+	{
 
+	};
+
+	// LEAVE_ROOM
+	struct LeaveRoomRequestPacket : public PacketHeader
+	{
+
+	};
 	struct LeaveRoomResponsePacket : public PacketHeader
 	{
 
 	};
 }
-// Packet 정의할 때 패킷에 맞는 직렬화버퍼 << operator를 정의해줘야한다.
-serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::EchoPacket& echoPacket);
 
-serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserResponsePacket& chattingPacket);
-//serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserRequestPacket& chattingPacket);
+
+// Packet 정의할 때 패킷에 맞는 직렬화버퍼 << operator를 정의해줘야한다, PacketHeader의 사이즈 계산은 해놓은 상태여야한다!  operator << >> 는 입력 / 출력만 행할 뿐이다.
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserRequestPacket& chatUserRequestPacket);
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatRoomRequestPacket& chatRoomRequestPacket);
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserResponsePacket& chatUserResponsePacket);
+
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::LogInRequestPacket& logInRequestPacket);
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::LogInResponsePacket& logInResponsePacket);
+
+// >> opeartor 정의, >> operator는 PacketHeader에 대한 분리를 진행했기에 packetHeader의 데이터는 신경쓰지 않아도 된다.
+serializationBuffer& operator>> (serializationBuffer& serialBuffer, C_Network::ChatUserRequestPacket& chatUserRequestPacket);
+serializationBuffer& operator>> (serializationBuffer& serialBuffer, C_Network::ChatRoomRequestPacket& chatRoomRequestPacket);
+serializationBuffer& operator>> (serializationBuffer& serialBuffer, C_Network::ChatUserResponsePacket& chatUserResponsePacket);
+
+serializationBuffer& operator>> (serializationBuffer& serialBuffer, C_Network::LogInRequestPacket& logInRequestPacket);
+serializationBuffer& operator>> (serializationBuffer& serialBuffer, C_Network::LogInResponsePacket& logInResponsePacket);
+

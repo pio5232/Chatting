@@ -350,14 +350,9 @@ C_Network::NetworkErrorCode C_Network::ServerBase::ProcessRecv(Session* sessionP
 		}
 		
 		tempBuffer.MoveRearPos(header.size);
-
-		//if EchoServer
-		OnRecv(tempBuffer, sessionPtr->GetId(), ECHO_PACKET); //, header.type); // Echo Server를 테스트하는 상황에서는 header의 type을 따지지 않는다.
-		_monitor->IncRecvCount();
 		
-		// Else
-		//OnRecv(tempBuffer, sessionPtr->GetId(), header.type); 
-		//_monitor->IncRecvCount();
+		OnRecv(tempBuffer, sessionPtr->GetId(), header.type); 
+		_monitor->IncRecvCount();
 	}
 
 	sessionPtr->PostRecv();
