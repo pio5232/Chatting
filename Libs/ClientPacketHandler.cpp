@@ -5,32 +5,8 @@
 /*---------------------------------------
 			ClientPacketHandler
 ---------------------------------------*/
-std::unordered_map<uint16, C_Network::ClientPacketHandler::PacketFunc> C_Network::ClientPacketHandler::packetFuncs;
-C_Network::ChattingServer* C_Network::ClientPacketHandler::_owner = nullptr;
 
-void C_Network::ClientPacketHandler::Init(C_Network::ChattingServer* owner)
-{
-	_owner = owner;
-
-	packetFuncs.clear();
-
-	// TODO : 로그인 서버 만들면 해당 작업을 로그인 서버로 옮기기
-	packetFuncs[LOG_IN_REQUEST_PACKET] = ClientPacketHandler::ProcessLogInPacket;
-	
-	packetFuncs[CHAT_TO_ROOM_REQUEST_PACKET] = ClientPacketHandler::ProcessChatToRoomPacket; // Chat To Room Users
-	packetFuncs[CHAT_TO_USER_REQUEST_PACKET] = ClientPacketHandler::ProcessChatToUserPacket; // Chat To Room Users
-
-}
-
-C_Network::NetworkErrorCode C_Network::ClientPacketHandler::ProcessPacket(ULONGLONG sessionId, uint16 packetType, C_Utility::CSerializationBuffer& buffer)
-{
-	if (packetFuncs.find(packetType) == packetFuncs.end())
-		return C_Network::NetworkErrorCode::CANNOT_FIND_PACKET_FUNC;
-
-	return packetFuncs[packetType](sessionId, buffer);
-}
-
-C_Network::NetworkErrorCode C_Network::ClientPacketHandler::ProcessChatToRoomPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer)
+C_Network::NetworkErrorCode C_Network::ChattingClientPacketHandler::ProcessChatToRoomPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer)
 {
 	ChatRoomRequestPacket* chatRoomRequestPacket = static_cast<ChatRoomRequestPacket*>(malloc(sizeof(PacketHeader) + buffer.GetDataSize()));
 
@@ -68,7 +44,7 @@ C_Network::NetworkErrorCode C_Network::ClientPacketHandler::ProcessChatToRoomPac
 	//return result;
 }
 
-C_Network::NetworkErrorCode C_Network::ClientPacketHandler::ProcessChatToUserPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer)
+C_Network::NetworkErrorCode C_Network::ChattingClientPacketHandler::ProcessChatToUserPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer)
 {
 	//uint16 messageLen;
 
@@ -91,9 +67,11 @@ C_Network::NetworkErrorCode C_Network::ClientPacketHandler::ProcessChatToUserPac
 	//// TODO : 정상 처리
 
 	//return result;
+
+	return C_Network::NetworkErrorCode::NONE;
 }
 
-C_Network::NetworkErrorCode C_Network::ClientPacketHandler::ProcessLogInPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer)
+C_Network::NetworkErrorCode C_Network::ChattingClientPacketHandler::ProcessLogInPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer)
 {
 	LogInRequestPacket clientRequestPacket;
 

@@ -2,7 +2,6 @@
 
 #include "NetworkBase.h"
 #include "NetworkUtils.h"
-#include "ClientPacketHandler.h"
 #include "UserManager.h"
 
 namespace C_Network
@@ -23,6 +22,7 @@ namespace C_Network
 		NetworkErrorCode SendToRoom(SharedSendBuffer& buffer, uint16 roomNum);
 
 	private:
+		class ChattingClientPacketHandler* _packetHandler;
 		std::unique_ptr<RoomManager> _roomMgr;
 		std::unique_ptr<UserManager> _userMgr;
 	};
