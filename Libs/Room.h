@@ -11,12 +11,18 @@ namespace C_Network
 		void EnterRoom(ULONGLONG userId);
 		void LeaveRoom(ULONGLONG userId);
 
+		uint16 GetCurUserCnt() const { return _curUserCnt; }
+		uint16 GetMaxUserCnt() const { return _curUserCnt; }
+		uint16 GetRoomNum() const { return _roomNumber; }
+		ULONGLONG GetOwnerId() const { return _ownerId; }
+
 		NetworkErrorCode SendToRoom(SharedSendBuffer sharedSendBuffer);
 
 	private:
-		uint _curUserCnt;
-		uint _maxUserCnt;
-		uint _roomNumber; // 몇 번째 방인지 확인한다..
+		ULONGLONG _ownerId; // == userId;
+		uint16 _curUserCnt;
+		uint16 _maxUserCnt;
+		uint16 _roomNumber; // 몇 번째 방인지 확인한다..
 
 		std::vector<User*> _userList;
 		

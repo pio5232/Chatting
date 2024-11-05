@@ -9,6 +9,10 @@ namespace C_Network
 
 	const int MAX_PACKET_SIZE = 1000;
 	TODO_DEFINITION;
+	enum
+	{
+		ROOM_NAME_MAX_LEN = 60,
+	};
 	enum PacketType : uint16 // packet order
 	{
 		// C_S, REQUEST = 클라이언트 -> 서버
@@ -21,17 +25,21 @@ namespace C_Network
 
 		ENTER_ROOM_REQUEST_PACKET,
 		ENTER_ROOM_RESPONSE_PACKET,
+		ENTER_ROOM_NOTIFY_PACKET,
 
 		LEAVE_ROOM_REQUEST_PACKET,
 		LEAVE_ROOM_RESPONSE_PACKET,
+		LEAVE_ROOM_NOTIFY_PACKET,
 
 		CLIENT_LOG_OUT_PACKET,
 
 		// 클라이언트의 요청
 		CHAT_TO_ROOM_REQUEST_PACKET, // 방 안의 유저에게 메시지 전송 요청, RoomNum이 -1이면 모든 방에 전송.
 		CHAT_TO_USER_REQUEST_PACKET, // 하나의 유저에게 메시지 전송 요청.
+		CHAT_NOTIFY_PACKET,
 
 		// 서버의 응답.
+		CHAT_TO_ROOM_RESPONSE_PACKET,
 		CHAT_TO_USER_RESPONSE_PACKET, // 
 
 		ECHO_PACKET = 65535,
@@ -70,7 +78,7 @@ namespace C_Network
 		//ULONGLONG sendUserId = 0;
 		ULONGLONG targetUserId = 0;
 		uint16 messageLen = 0;
-		char payLoad[0];
+		WCHAR payLoad[0];
 	};
 	struct ChatRoomRequestPacket : public PacketHeader
 	{
@@ -78,7 +86,7 @@ namespace C_Network
 	public:
 		uint16 roomNum = -1; // -1 => 전체 채팅, roomNum -> 해당 room에만 전송.
 		uint16 messageLen = 0;
-		char payLoad[0];
+		WCHAR payLoad[0];
 	};
 	
 	struct ChatUserResponsePacket : public PacketHeader
@@ -87,7 +95,7 @@ namespace C_Network
 		ULONGLONG sendUserId = 0;
 		//ULONGLONG targetUserId = 0;
 		uint16 messageLen = 0;
-		char payLoad[0];
+		WCHAR payLoad[0];
 	};
 
 	// LOG_IN
@@ -131,6 +139,25 @@ namespace C_Network
 	struct LeaveRoomResponsePacket : public PacketHeader
 	{
 
+	};
+
+	struct RoomInfo
+	{
+		ULONGLONG ownerId;
+		uint16 roomNum;
+		uint16 curUserCnt;
+		uint16 maxUserCnt;
+		uint16 roomNameLen;
+		WCHAR roomName[0];
+	};
+
+	// REQUEST ROOM LIST
+	struct RoomListRequestPacket : public PacketHeader
+	{};
+	struct RoomListResponsePacket : public PacketHeader
+	{
+		uint16 roomCnt;
+		RoomInfo roomInfos[0];
 	};
 }
 

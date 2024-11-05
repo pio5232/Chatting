@@ -429,8 +429,6 @@ C_Network::ClientBase::ClientBase(const NetAddress& targetEndPoint, uint maxSess
 
 C_Network::ClientBase::~ClientBase()
 {
-
-	WSACleanup();
 }
 
 C_Network::NetworkErrorCode C_Network::ClientBase::Init()
@@ -450,7 +448,7 @@ C_Network::NetworkErrorCode C_Network::ClientBase::Init()
 
 	uint concurrentThreadCnt = sys.dwNumberOfProcessors;
 
-	concurrentThreadCnt = concurrentThreadCnt * 0.7;
+	concurrentThreadCnt = concurrentThreadCnt * 0.6;
 	if (concurrentThreadCnt == 0)
 		concurrentThreadCnt = 1;
 
@@ -484,7 +482,14 @@ C_Network::NetworkErrorCode C_Network::ClientBase::Begin()
 
 C_Network::NetworkErrorCode C_Network::ClientBase::End()
 {
+	for (std::thread& t: _workerThreads)
+	{
+		if (t.joinable())
+			t.join();
+	}
 	_monitor->End();
+
+	WSACleanup();
 
 	return C_Network::NetworkErrorCode::NONE;
 }
@@ -494,12 +499,6 @@ C_Network::NetworkErrorCode C_Network::ClientBase::Connect()
 	for (int i = 0; i < _sessionMgr->GetMaxSessionCount(); i++)
 	{
 		SOCKET clientSock = socket(AF_INET, SOL_SOCKET, 0);
-
-		if (SOCKET_ERROR == connect(clientSock, (SOCKADDR*)&_targetEndPoint.GetSockAddr(), sizeof(SOCKADDR_IN)))
-		{
-			TODO_LOG_ERROR;
-			return C_Network::NetworkErrorCode::CLIENT_CONNECT_FAILED;
-		}
 
 		LINGER linger;
 
@@ -512,6 +511,12 @@ C_Network::NetworkErrorCode C_Network::ClientBase::Connect()
 			return C_Network::NetworkErrorCode::SET_SOCK_OPT_FAILED;
 		}
 
+		if (SOCKET_ERROR == connect(clientSock, (SOCKADDR*)&_targetEndPoint.GetSockAddr(), sizeof(SOCKADDR_IN)))
+		{
+			TODO_LOG_ERROR;
+			return C_Network::NetworkErrorCode::CLIENT_CONNECT_FAILED;
+		}
+
 		SOCKADDR_IN clientInfo;
 		int sockaddrLen = sizeof(clientInfo);
 		if (SOCKET_ERROR == getsockname(clientSock, (SOCKADDR*)&clientInfo, &sockaddrLen))
@@ -520,6 +525,8 @@ C_Network::NetworkErrorCode C_Network::ClientBase::Connect()
 			return C_Network::NetworkErrorCode::SET_SOCK_OPT_FAILED;
 		}
 		_sessionMgr->AddSession(clientSock, &clientInfo);
+
+		OnEnterServer();
 	}
 	return C_Network::NetworkErrorCode::NONE;
 }
@@ -533,8 +540,6 @@ C_Network::NetworkErrorCode C_Network::ClientBase::Disconnect()
 
 C_Network::NetworkErrorCode C_Network::ClientBase::OnEnterServer()
 {
-	TODO_LOG; // ENTER SERVER LOG
-
 	return C_Network::NetworkErrorCode::NONE;
 }
 

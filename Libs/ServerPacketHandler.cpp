@@ -6,27 +6,8 @@
 //					ServerPacketHandler
 // -------------------------------------------------------
 
-std::unordered_map<uint16, C_Network::ServerPacketHandler::PacketFunc> C_Network::ServerPacketHandler::packetFuncs;
-C_Network::ChattingClient* C_Network::ServerPacketHandler::_owner = nullptr;
 
-void C_Network::ServerPacketHandler::Init(ChattingClient* owner)
-{
-	_owner = owner;
-
-	packetFuncs.clear();
-	packetFuncs[CHAT_TO_USER_RESPONSE_PACKET] = ServerPacketHandler::ProcessChatToUserPacket; // Chat To Room Users
-}
-
-C_Network::NetworkErrorCode C_Network::ServerPacketHandler::ProcessPacket(uint16 packetType, C_Utility::CSerializationBuffer& buffer)
-{
-	if (packetFuncs.find(packetType) == packetFuncs.end())
-		return C_Network::NetworkErrorCode::CANNOT_FIND_PACKET_FUNC;
-
-	return packetFuncs[packetType](buffer);
-}
-
-
-C_Network::NetworkErrorCode C_Network::ServerPacketHandler::ProcessChatToUserPacket(C_Utility::CSerializationBuffer& buffer)
+C_Network::NetworkErrorCode C_Network::ChattingServerPacketHandler::ProcessChatToUserPacket(C_Utility::CSerializationBuffer& buffer)
 {
 	//uint16 messageLen;
 

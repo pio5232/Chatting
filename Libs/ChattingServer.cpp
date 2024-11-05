@@ -4,8 +4,6 @@
 
 C_Network::ChattingServer::ChattingServer(const NetAddress& netAddr, uint maxSessionCnt) : ServerBase(netAddr, maxSessionCnt)
 {
-	// TODO : USE POOL
-	_packetHandler = new ChattingClientPacketHandler(this);
 
 	const uint roomCnt = 20;
 	
@@ -15,6 +13,9 @@ C_Network::ChattingServer::ChattingServer(const NetAddress& netAddr, uint maxSes
 	
 	_roomMgr = std::make_unique<RoomManager>(this, roomCnt, maxRoomUserCnt);
 	_userMgr = std::make_unique<UserManager>(maxSessionCnt);
+	
+	// TODO : USE POOL, 스마트 포인터에 대해서도 pool을 적용할 수 있다면 좋을 것임.
+	_packetHandler = new ChattingClientPacketHandler(this, _roomMgr.get(), _userMgr.get());
 }
 
 C_Network::ChattingServer::~ChattingServer()

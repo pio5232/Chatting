@@ -15,7 +15,7 @@ namespace C_Network
 		// [ Server - User Count / Client - Dummy Count], <id, index>
 		std::unordered_map<ULONGLONG, ULONGLONG> _userToSessionMap;
 
-		std::vector<Session*> _userArr;
+		std::vector<User*> _userArr;
 		std::stack<uint> _availableSessionidxList;
 
 		SRWLOCK _mapLock;

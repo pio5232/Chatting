@@ -165,6 +165,7 @@ namespace C_Network
 
 		  uint GetMaxSessionCount() { return _maxSessionCnt; }
 		  void DeleteAllSession();
-
+	private:
+		
 	};
 }

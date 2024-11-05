@@ -71,6 +71,12 @@ C_Network::NetworkErrorCode C_Network::ChattingClientPacketHandler::ProcessChatT
 	return C_Network::NetworkErrorCode::NONE;
 }
 
+C_Network::NetworkErrorCode C_Network::ChattingClientPacketHandler::ProcessRoomListRequestPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer)
+{
+	_roomMgr->
+	return NetworkErrorCode();
+}
+
 C_Network::NetworkErrorCode C_Network::ChattingClientPacketHandler::ProcessLogInPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer)
 {
 	LogInRequestPacket clientRequestPacket;

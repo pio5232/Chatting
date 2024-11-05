@@ -8,15 +8,20 @@ namespace C_Network
 {
 	// 서버에서 온 패킷을 클라이언트가 처리한다.
 	// -------------------------------------------------------
-	//					ServerPacketHandler
+	//					BaseServerPacketHandler
 	// -------------------------------------------------------
+
+	template <typename PacketHandlerType>
 	class ServerPacketHandler
 	{
 	public:
 		// 어차피 클라이언트가 처리하는 메시지는 서버에서 온 메시지이다.
-		using PacketFunc = C_Network::NetworkErrorCode(*)(C_Utility::CSerializationBuffer&);
-
-		static void Init(class ChattingClient* owner);
+		using PacketFunc = C_Network::NetworkErrorCode(PacketHandlerType::*)(C_Utility::CSerializationBuffer&);
+		
+		ServerPacketHandler()
+		{
+			_packetFuncs.clear();
+		}
 
 		// 직렬화 버퍼에 데이터를 채우자! 가변 템플릿을 활용.
 		template <typename PacketType>
@@ -31,14 +36,28 @@ namespace C_Network
 			return sendBuffer;
 		}
 
-		static C_Network::NetworkErrorCode ProcessPacket(uint16 packetType, C_Utility::CSerializationBuffer& buffer);
+		NetworkErrorCode ProcessPacket(ULONGLONG sessionId, uint16 packetType, C_Utility::CSerializationBuffer& buffer)
+		{
+			if (_packetFuncs.find(packetType) == _packetFuncs.end())
+				return C_Network::NetworkErrorCode::CANNOT_FIND_PACKET_FUNC;
 
-		static C_Network::NetworkErrorCode ProcessChatToUserPacket(C_Utility::CSerializationBuffer& buffer);
+			return ((reinterpret_cast<PacketHandlerType*>(this))->*_packetFuncs[packetType])(sessionId, buffer);
+		}
+	protected:
+		std::unordered_map<uint16, PacketFunc> _packetFuncs;
+	};
 
+	class ChattingServerPacketHandler : public ServerPacketHandler<ChattingServerPacketHandler>
+	{
+	public:
+		ChattingServerPacketHandler(class ChattingClient* owner) : _owner(owner)
+		{
+			_packetFuncs[CHAT_TO_USER_RESPONSE_PACKET] = &ChattingServerPacketHandler::ProcessChatToUserPacket; // Chat To Room Users
+		}
 	private:
-		static std::unordered_map<uint16, PacketFunc> packetFuncs;
-		
-		static class ChattingClient* _owner;
+		// 함수 정의
+		C_Network::NetworkErrorCode ProcessChatToUserPacket(C_Utility::CSerializationBuffer& buffer);
 
+		class ChattingClient* _owner;
 	};
 }
