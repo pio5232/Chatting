@@ -3,24 +3,23 @@
 #include <functional>
 #include "PacketDefine.h"
 #include <unordered_map>
+
 namespace C_Network
 {
 	/*---------------------------------------
 				PacketHandler						// 서버마다 정의한다.
 	---------------------------------------*/
+	template <typename PacketHandlerType>
 	class ClientPacketHandler
 	{
 	public:
 		// uin16 Message크기는 제외한다. 어차피 PacketHandler가 처리하게 되는 것은 하나의 완전한 데이터로 왔을 때 처리하기 때문이다.
 		//, uint16) > ; // sessionId, Message 내용 버퍼, Message 크기.
-		using PacketFunc = C_Network::NetworkErrorCode(*)(ULONGLONG, C_Utility::CSerializationBuffer&);//std::function<bool(ULONGLONG, char*)>;
-
-		static void Init(class EchoServer* owner);
-		static void Init(class ChattingServer* owner);
+		using PacketFunc = C_Network::NetworkErrorCode(PacketHandlerType::*)(ULONGLONG, C_Utility::CSerializationBuffer&);//std::function<bool(ULONGLONG, char*)>;
 
 		// 직렬화 버퍼에 데이터를 채우자! 가변 템플릿을 활용.
 		template <typename PacketType>
-		static SharedSendBuffer MakePacket(uint16 packetType, PacketType& packet)//(uint16 packetType, uint16 packetSize, Types... args )
+		SharedSendBuffer MakePacket(uint16 packetType, PacketType& packet)//(uint16 packetType, uint16 packetSize, Types... args ) 
 		{
 			// TODO : CSerializationBuffer 또한 Pool에서 꺼내서 사용하도록 만든다.
 
@@ -47,23 +46,45 @@ namespace C_Network
 		//}
 
 		// processPacket -> packet 처리
-		static C_Network::NetworkErrorCode ProcessPacket(ULONGLONG sessionId, uint16 packetType, C_Utility::CSerializationBuffer& buffer);
 
-		static C_Network::NetworkErrorCode ProcessEchoPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
+		NetworkErrorCode ProcessPacket(ULONGLONG sessionId, uint16 packetType, C_Utility::CSerializationBuffer& buffer)
+		{
+			if (packetFuncs.find(packetType) == packetFuncs.end())
+				return C_Network::NetworkErrorCode::CANNOT_FIND_PACKET_FUNC;
 
-		static C_Network::NetworkErrorCode ProcessChatToRoomPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
-
-		static C_Network::NetworkErrorCode ProcessChatToUserPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
-
-		static C_Network::NetworkErrorCode ProcessLogInPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
-
+			return ((reinterpret_cast<PacketHandlerType*>(this))->*packetFuncs[packetType])(sessionId, buffer);
+		}
 	private:
-		static std::unordered_map<uint16, PacketFunc> packetFuncs;
+
+		//C_Network::NetworkErrorCode ProcessChatToRoomPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
+
+		//C_Network::NetworkErrorCode ProcessChatToUserPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
+
+		//C_Network::NetworkErrorCode ProcessLogInPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
+
+	protected:
+		
+		std::unordered_map<uint16, PacketFunc> packetFuncs;
 		//static class NetworkBase* _owner;
 
 		// 테스트 끝나고 echoServer 삭제 필요.
-		static class EchoServer* _echoOwner;
+		//class ChattingServer* _owner;
+	};
 
-		static class ChattingServer* _owner;
+	class EchoClientPacketHandler : public ClientPacketHandler<EchoClientPacketHandler>
+	{
+	public: 
+		// 상속받은 함수에서 사용 시 각자의 타입에 맞게 변형해서 사용한다.
+		EchoClientPacketHandler(class EchoServer* owner) : _owner(owner)
+		{
+			packetFuncs[ECHO_PACKET] = &EchoClientPacketHandler::ProcessEchoPacket; // Echo
+		}
+		
+	private:
+		C_Network::NetworkErrorCode ProcessEchoPacket(ULONGLONG sessionId, C_Utility::CSerializationBuffer& buffer);
+
+		class EchoServer* _owner;
+
+		//class EchoServer* _owner;
 	};
 }
