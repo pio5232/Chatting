@@ -26,6 +26,7 @@
     <ClInclude Include="CRingBuffer.h" />
     <ClInclude Include="CSerializationBuffer.h" />
     <ClInclude Include="EchoServer.h" />
+    <ClInclude Include="ErrorCode.h" />
     <ClInclude Include="NetworkBase.h" />
     <ClInclude Include="CLog.h" />
     <ClInclude Include="Define.h" />

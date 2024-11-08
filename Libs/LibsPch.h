@@ -14,7 +14,8 @@
 #include "Utils.h"
 #include "NetworkUtils.h"
 
-#include "NetworkErrorCode.h"
+#include "ErrorCode.h" // 컨텐츠 에러 코드.
+#include "NetworkErrorCode.h" // 네트워크 에러 코드
 #include "Session.h"
 
 inline void CCrash(const WCHAR* resaon)

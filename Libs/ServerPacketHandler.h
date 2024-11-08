@@ -20,7 +20,7 @@ namespace C_Network
 		
 		ServerPacketHandler()
 		{
-			_packetFuncs.clear();
+			_packetFuncsDic.clear();
 		}
 
 		// 직렬화 버퍼에 데이터를 채우자! 가변 템플릿을 활용.
@@ -38,13 +38,13 @@ namespace C_Network
 
 		NetworkErrorCode ProcessPacket(ULONGLONG sessionId, uint16 packetType, C_Utility::CSerializationBuffer& buffer)
 		{
-			if (_packetFuncs.find(packetType) == _packetFuncs.end())
+			if (_packetFuncsDic.find(packetType) == _packetFuncsDic.end())
 				return C_Network::NetworkErrorCode::CANNOT_FIND_PACKET_FUNC;
 
-			return ((reinterpret_cast<PacketHandlerType*>(this))->*_packetFuncs[packetType])(sessionId, buffer);
+			return ((reinterpret_cast<PacketHandlerType*>(this))->*_packetFuncsDic[packetType])(sessionId, buffer);
 		}
 	protected:
-		std::unordered_map<uint16, PacketFunc> _packetFuncs;
+		std::unordered_map<uint16, PacketFunc> _packetFuncsDic;
 	};
 
 	class ChattingServerPacketHandler : public ServerPacketHandler<ChattingServerPacketHandler>
@@ -52,7 +52,7 @@ namespace C_Network
 	public:
 		ChattingServerPacketHandler(class ChattingClient* owner) : _owner(owner)
 		{
-			_packetFuncs[CHAT_TO_USER_RESPONSE_PACKET] = &ChattingServerPacketHandler::ProcessChatToUserPacket; // Chat To Room Users
+			_packetFuncsDic[CHAT_TO_USER_RESPONSE_PACKET] = &ChattingServerPacketHandler::ProcessChatToUserPacket; // Chat To Room Users
 		}
 	private:
 		// 함수 정의

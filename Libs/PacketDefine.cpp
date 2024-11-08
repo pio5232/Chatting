@@ -2,6 +2,13 @@
 #include "PacketDefine.h"
 #include "CSerializationBuffer.h"
 
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::PacketHeader& packetHeader)
+{
+	serialBuffer << packetHeader.size << packetHeader.type;
+
+	return serialBuffer;
+}
+
 serializationBuffer& operator<<(serializationBuffer& serialBuffer, C_Network::ChatUserRequestPacket& chatUserRequestPacket)
 {
 	serialBuffer << chatUserRequestPacket.size << chatUserRequestPacket.type << chatUserRequestPacket.targetUserId << chatUserRequestPacket.messageLen;
@@ -16,6 +23,13 @@ serializationBuffer& operator<<(serializationBuffer& serialBuffer, C_Network::Ch
 	serialBuffer.PutData(chatUserResponsePacket.payLoad, chatUserResponsePacket.messageLen);
 
 	return serialBuffer;
+}
+
+serializationBuffer& operator<<(serializationBuffer& serialBuffer, C_Network::ChatRoomResponsePacket& chatUserResponsePacket)
+{
+	serialBuffer << chatUserResponsePacket.size << chatUserResponsePacket.type;
+	return serialBuffer;
+	// TODO: 여기에 return 문을 삽입합니다.
 }
 
 serializationBuffer& operator<<(serializationBuffer& serialBuffer, C_Network::ChatRoomRequestPacket& chatRoomRequestPacket)

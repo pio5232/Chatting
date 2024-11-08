@@ -36,7 +36,7 @@ void C_Utility::NetMonitor::ProcessMonitoring()
 {
 	while (_monitoringFlag)
 	{
-		printf("[ Current Connect Session Count : %u ]\n", _sessionMgr->GetCurSessionCount());
+		printf("[ Current Connect Session Count : %u ]\n", _sessionMgr->GetCurElementCount());
 
 		printf("[ Send Completion Count : %u ]\n", InterlockedExchange(&_sendCount, 0));
 

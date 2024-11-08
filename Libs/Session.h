@@ -118,39 +118,23 @@ namespace C_Network
 				Session Manager
 	--------------------------------------*/
 
-	class SessionManager
+	class SessionManager : public C_Utility::ManagerPool<Session>
 	{
 	public:
 		SessionManager(uint maxSessionCnt);
 		virtual ~SessionManager() = 0;
 		Session* AddSession(SOCKET sock, SOCKADDR_IN* pSockAddr);
-		uint GetCurSessionCount() const { return _curSessionCnt; } // 현재 접속한 세션 수
 		void DeleteSession(Session* sessionPtr);
 		
 		Session* GetSession(ULONGLONG sessionId); // sessionId로 session을 찾는다.
 
-		bool IsFull() 
-		{
-			SRWLockGuard lockGuard(&_indexListLock); 
-			return _availableSessionidxList.empty(); 
-		}
-
-
 	protected:
-		// Accept에서는 차지 않았다가 차는 경우가 존재하지 않는다.
-		uint GetAvailableIndex();
 		// [ Server - User Count / Client - Dummy Count], <id, index>
-		std::unordered_map<ULONGLONG, uint> _idToIndexMap; 
-		std::unordered_map<uint, ULONGLONG> _indexToIdMap;
-
-		std::vector<Session*> _sessionArr;
-		std::stack<uint> _availableSessionidxList;
+		std::unordered_map<ULONGLONG, uint> _idToIndexDic; 
+		std::unordered_map<uint, ULONGLONG> _indexToIdDic;
 
 		SRWLOCK _mapLock;
-		SRWLOCK _indexListLock;
-		uint _maxSessionCnt;
 
-		volatile ULONG _curSessionCnt;
 	};
 	class ServerSessionManager : public SessionManager
 	{
@@ -163,7 +147,6 @@ namespace C_Network
 	public: ClientSessionManager(uint maxSessionCnt) : SessionManager(maxSessionCnt) {}
 		  ~ClientSessionManager() {}
 
-		  uint GetMaxSessionCount() { return _maxSessionCnt; }
 		  void DeleteAllSession();
 	private:
 		

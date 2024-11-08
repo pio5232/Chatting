@@ -125,7 +125,7 @@ int CSerializationBuffer::GetData(char* chpDest, int iSize) // 바깥으로 데이터 �
 
 	return iSize;
 }
-int CSerializationBuffer::PutData(char* chpSrc, int iSrcSize) // 데이터 넣기, Throw (int) , 0번 (넣을 사이즈 작음)
+int CSerializationBuffer::PutData(const char* chpSrc, int iSrcSize) // 데이터 넣기, Throw (int) , 0번 (넣을 사이즈 작음)
 {
 	//if (m_iBufferCapacity - m_iDataSize < iSrcSize)
 	//	throw 0;

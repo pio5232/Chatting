@@ -1,28 +1,23 @@
 #pragma once
 #include "User.h"
-
+#include <unordered_map>
 namespace C_Network
 {
-	class UserManager
+	// UserManager는 전체를 총괄하도록 한다. 따라서 Room은 일부 User에 관한 정보만 관리하기 때문에 UserManager를 사용하지 않도록 한다.
+	class UserManager : public C_Utility::ManagerPool<User>
 	{
 	public:
-		UserManager(uint maxSessionCnt);
+		UserManager(uint maxUserCnt);
 		~UserManager();
+
+		void AddUser(ULONGLONG userId);
+		User* GetUser(ULONGLONG sessionId); // 해당 session id를 가진 user를 찾아내서 리턴한다.
 
 	private:
 
-		// Accept에서는 차지 않았다가 차는 경우가 존재하지 않는다.
-		// [ Server - User Count / Client - Dummy Count], <id, index>
-		std::unordered_map<ULONGLONG, ULONGLONG> _userToSessionMap;
-
-		std::vector<User*> _userArr;
-		std::stack<uint> _availableSessionidxList;
-
 		SRWLOCK _mapLock;
-		SRWLOCK _indexListLock;
-		uint _maxSessionCnt;
-
-		volatile ULONG _curSessionCnt;
-
+		// UserId -> SessionId는 user가 Login 할 때 자신의 session id를 등록할 수 있도록 한다.
+		// SessionId -> UserId;
+		std::unordered_map<ULONGLONG, uint> _sessionToUserIdxMap;
 	};
 }

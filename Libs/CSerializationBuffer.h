@@ -30,7 +30,7 @@ namespace C_Utility
 		int GetFreeSize() const;
 
 		int GetData(char* chpDest, int iSize);
-		int PutData(char* chpSrc, int iSrcSize);
+		int PutData(const char* chpSrc, int iSrcSize);
 
 		// 연산자 오버로딩
 		CSerializationBuffer& operator<<(unsigned char ucValue);

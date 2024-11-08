@@ -43,7 +43,7 @@ void C_Network::ChattingServer::OnError(int errCode, WCHAR* cause)
 
 void C_Network::ChattingServer::OnRecv(C_Utility::CSerializationBuffer& buffer, ULONGLONG sessionId, uint16 type)
 {
-	if (_packetHandler->ProcessPacket(sessionId, type, buffer) == C_Network::NetworkErrorCode::CANNOT_FIND_PACKET_FUNC)
+	if (_packetHandler->ProcessPacket(sessionId, type, buffer) == ErrorCode::CANNOT_FIND_PACKET_FUNC)
 		TODO_LOG;
 }
 

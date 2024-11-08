@@ -300,37 +300,20 @@ void C_Network::Session::PostDisconnect()
 			Session Manager
 --------------------------------------*/
 
-C_Network::SessionManager::SessionManager(uint maxSessionCnt) : _maxSessionCnt(maxSessionCnt), _curSessionCnt(0)
+C_Network::SessionManager::SessionManager(uint maxSessionCnt) : C_Utility::ManagerPool<Session>(maxSessionCnt)
 {
 	InitializeSRWLock(&_mapLock);
-	InitializeSRWLock(&_indexListLock);
-
-	_sessionArr.reserve(maxSessionCnt);
-
-	for (int i = maxSessionCnt-1; i >= 0; i--)
-	{
-		_availableSessionidxList.push(i);
-		// TODO: POOL
-		Session* newSession = new Session();
-		_sessionArr.push_back(newSession);
-	}
 }
 
 C_Network::SessionManager::~SessionManager()
-{
-	for (Session* sessionPtr : _sessionArr)
-	{
-		delete sessionPtr;
-	}
-	_sessionArr.clear();
-}
+{}
 
 C_Network::Session* C_Network::SessionManager::AddSession(SOCKET sock, SOCKADDR_IN* pSockAddr)
 {   
 	// accept의 경우 꽉 찼을 때는 받지 않기 때문에. 꽉 찼을 경우를 생각할 필요는 없다.
 	uint idx = GetAvailableIndex();
 	
-	C_Network::Session* newSession = _sessionArr[idx];
+	C_Network::Session* newSession = _elementArr[idx];
 
 	newSession->Init(sock, pSockAddr);
 
@@ -338,12 +321,12 @@ C_Network::Session* C_Network::SessionManager::AddSession(SOCKET sock, SOCKADDR_
 
 	{
 		SRWLockGuard lockGuard(&_mapLock);
-		_idToIndexMap[sessionId] = idx;
-		_indexToIdMap[idx] = sessionId;
+		_idToIndexDic[sessionId] = idx;
+		_indexToIdDic[idx] = sessionId;
 	}
-	InterlockedIncrement(&_curSessionCnt);
+	InterlockedIncrement(&_curElementCnt);
 
-	return _sessionArr[idx];
+	return _elementArr[idx];
 }
 
 void C_Network::SessionManager::DeleteSession(Session* sessionPtr)
@@ -353,20 +336,17 @@ void C_Network::SessionManager::DeleteSession(Session* sessionPtr)
 	int arrIdx;
 	{
 		SRWLockGuard lockGuard(&_mapLock);
-		arrIdx = _idToIndexMap[sessionId];
-		_idToIndexMap.erase(sessionId);
-		_indexToIdMap.erase(arrIdx);
+		arrIdx = _idToIndexDic[sessionId];
+		_idToIndexDic.erase(sessionId);
+		_indexToIdDic.erase(arrIdx);
 	}
-	closesocket(_sessionArr[arrIdx]->GetSock());
-	//if (_sessionArr[arrIdx]->_sendEvent._pendingBuffs.size() > 0)
-	//	DebugBreak();
-	//_sessionArr[arrIdx]->_sendEvent._pendingBuffs.clear();
+	closesocket(_elementArr[arrIdx]->GetSock());
 	
 	{
 		SRWLockGuard lockGuard(&_indexListLock);
-		_availableSessionidxList.push(arrIdx);
+		_availableElementidxList.push(arrIdx);
 	}
-	InterlockedDecrement(&_curSessionCnt);
+	InterlockedDecrement(&_curElementCnt);
 }
 
 C_Network::Session* C_Network::SessionManager::GetSession(ULONGLONG sessionId)
@@ -374,29 +354,18 @@ C_Network::Session* C_Network::SessionManager::GetSession(ULONGLONG sessionId)
 	SRWLockGuard lockGuard(&_mapLock);
 
 	// 수정 필요.
-	auto sessionIter = _idToIndexMap.find(sessionId);
-	if (sessionIter == _idToIndexMap.end())
+	auto sessionIter = _idToIndexDic.find(sessionId);
+	if (sessionIter == _idToIndexDic.end())
 		return nullptr;
 
-	return _sessionArr[sessionIter->second];//_sessionMap[sessionId];
+	return _elementArr[sessionIter->second];//_sessionMap[sessionId];
 }
 
-uint C_Network::SessionManager::GetAvailableIndex()
-{
-	SRWLockGuard lockGuard(&_indexListLock);
-	//if (_availableSessionidxList.empty())
-	//	return UINT_MAX;
-	//
-	uint idx = _availableSessionidxList.top();
-	_availableSessionidxList.pop();
-
-	return idx;
-}
 
 // Client에서는 재연결하지 않기 때문에 
 void C_Network::ClientSessionManager::DeleteAllSession()
 {
-	for (C_Network::Session* session : _sessionArr)
+	for (C_Network::Session* session : _elementArr)
 	{
 		DeleteSession(session);
 	}

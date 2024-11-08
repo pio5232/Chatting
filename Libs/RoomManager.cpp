@@ -2,34 +2,66 @@
 #include "RoomManager.h"
 #include "NetworkBase.h"
 
-C_Network::RoomManager::RoomManager(C_Network::ServerBase* owner, uint maxRoomCount, uint maxRoomUserCnt) : _owner(owner), _maxRoomUserCnt(maxRoomUserCnt)
+C_Network::RoomManager::RoomManager(C_Network::ServerBase* owner, uint16 maxRoomCount, uint16 maxRoomUserCnt) : 
+	C_Utility::ManagerPool<Room, ServerBase*, uint16 >(maxRoomCount, owner, maxRoomUserCnt),_owner(owner), _maxRoomUserCnt(maxRoomUserCnt)
 {
-	_roomList.reserve(maxRoomCount);
+	_usingRoomDic.reserve(maxRoomCount);
 
-	for (int i = 0; i < maxRoomCount; i++)
-	{
-		// TODO : ROOM POOL 사용
-		Room* room = new Room(_owner, _maxRoomUserCnt);
+	//for (int i = 0; i < maxRoomCount; i++)
+	//{
+	//	// TODO : ROOM POOL 사용
+	//	Room* room = new Room(_owner, _maxRoomUserCnt);
 
-		_roomList.push_back(room);
-	}
+	//	_roomList.push_back(room);
+	//}
 }
 
 C_Network::RoomManager::~RoomManager()
+{}
+
+ErrorCode C_Network::RoomManager::SendToUserRoomInfo(ULONGLONG sessionId, C_Network::SharedSendBuffer& buffer)
 {
-	// TODO : USEI TO ROOM POOL 
-	for (auto roomPtr : _roomList)
+	// RoomListResponsePacket
+
+	PacketHeader header;
+	uint16 curRoomCnt = _usingRoomDic.size();//_curElementCnt;
+	header.size = sizeof(curRoomCnt) + curRoomCnt * RoomInfo::GetSize();;
+	header.type = ROOM_LIST_RESPONSE_PACKET;
+
+	*buffer << header << curRoomCnt;
+
+	for (auto& roomPair : _usingRoomDic)
 	{
-		delete roomPtr;
+		Room* roomPtr = roomPair.second;
+
+		*buffer << roomPtr->GetOwnerId() << roomPtr->GetRoomNum() << roomPtr->GetCurUserCnt() << roomPtr->GetMaxUserCnt();
+		buffer->PutData(static_cast<const char*>(roomPtr->GetRoomNamePtr()), ROOM_NAME_MAX_LEN);
 	}
+
+	_owner->Send(sessionId, buffer);
+
+	return ErrorCode::NONE;
 }
 
-C_Network::NetworkErrorCode C_Network::RoomManager::SendToAllUser(C_Utility::CSerializationBuffer& buffer)
+ErrorCode C_Network::RoomManager::SendToAllUser(SharedSendBuffer& sendBuffer)
 {
-	return NetworkErrorCode();
+	for (auto& pair : _usingRoomDic)
+	{
+		pair.second->SendToAll(sendBuffer);
+	}
+
+	return ErrorCode::NONE;
 }
 
-C_Network::NetworkErrorCode C_Network::RoomManager::SendToRoom(C_Utility::CSerializationBuffer& buffer, uint16 roomNum)
+ErrorCode C_Network::RoomManager::SendToRoom(uint16 roomNum, SharedSendBuffer& sendBuffer)
 {
-	return NetworkErrorCode();
+	// find
+	std::unordered_map<uint16, Room*>::iterator iter = _usingRoomDic.find(roomNum);
+
+	if (iter == _usingRoomDic.end())
+		return ErrorCode::CANNOT_FIND_ROOM;
+
+	iter->second->SendToAll(sendBuffer);
+
+	return ErrorCode::NONE;
 }

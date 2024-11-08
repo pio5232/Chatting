@@ -9,12 +9,15 @@ namespace C_Network
 
 	const int MAX_PACKET_SIZE = 1000;
 	TODO_DEFINITION;
-	enum
-	{
-		ROOM_NAME_MAX_LEN = 60,
-	};
+
+
+	/// <summary>
+	/// 편의성을 위해서 구조체를 정의하고 있지만, 나중이 되면 구조체는 삭제해야 한다.
+	/// 원래는 직렬화 버퍼만 사용해서 복사가 Send / Recv 시 1번씩 일어났지만 현재는 구조체를 사용하기 때문에 복사가 2번씩 일어나고 있다.
+	/// </summary>
 	enum PacketType : uint16 // packet order
 	{
+		INVALID_PACKET = 65535,
 		// C_S, REQUEST = 클라이언트 -> 서버
 		// S_C, RESPONSE = 서버 -> 클라이언트
 		LOG_IN_REQUEST_PACKET = 0, //
@@ -42,7 +45,7 @@ namespace C_Network
 		CHAT_TO_ROOM_RESPONSE_PACKET,
 		CHAT_TO_USER_RESPONSE_PACKET, // 
 
-		ECHO_PACKET = 65535,
+		ECHO_PACKET = 65534,
 	};
 
 	// 항상 padding이 존재하는지 확인해야한다.
@@ -58,8 +61,8 @@ namespace C_Network
 	{
 	public:
 		//void SetSize(uint16 headerSize) { size = headerSize; }
-		uint16 size;
-		uint16 type; 
+		uint16 size = 0;
+		uint16 type = INVALID_PACKET; 
 	};
 
 	// ECHO REQUEST / RESPONSE
@@ -84,20 +87,32 @@ namespace C_Network
 	{
 		// TODO : 수정
 	public:
-		uint16 roomNum = -1; // -1 => 전체 채팅, roomNum -> 해당 room에만 전송.
+		uint16 roomNum = UINT16_MAX;
 		uint16 messageLen = 0;
 		WCHAR payLoad[0];
 	};
 	
+	// head만 존재.
 	struct ChatUserResponsePacket : public PacketHeader
 	{
 	public:
+		ChatUserResponsePacket(){ type = CHAT_TO_USER_RESPONSE_PACKET; }
+	};
+	
+	struct ChatRoomResponsePacket : public PacketHeader 
+	{
+	public:
+		ChatRoomResponsePacket() { type = CHAT_TO_ROOM_RESPONSE_PACKET; }
+	};
+	
+
+	struct ChatOtherUserNotifyPacket : public PacketHeader
+	{
+	public :
 		ULONGLONG sendUserId = 0;
-		//ULONGLONG targetUserId = 0;
 		uint16 messageLen = 0;
 		WCHAR payLoad[0];
 	};
-
 	// LOG_IN
 	// 암호화.. 복호화?
 	struct alignas (32) LogInRequestPacket : public PacketHeader
@@ -140,17 +155,15 @@ namespace C_Network
 	{
 
 	};
-
 	struct RoomInfo
 	{
+		static uint16 GetSize() { return sizeof(ownerId) + sizeof(roomNum) + sizeof(curUserCnt) + sizeof(maxUserCnt) + sizeof(roomName); }
 		ULONGLONG ownerId;
 		uint16 roomNum;
 		uint16 curUserCnt;
 		uint16 maxUserCnt;
-		uint16 roomNameLen;
-		WCHAR roomName[0];
+		WCHAR roomName[ROOM_NAME_MAX_LEN];
 	};
-
 	// REQUEST ROOM LIST
 	struct RoomListRequestPacket : public PacketHeader
 	{};
@@ -158,14 +171,19 @@ namespace C_Network
 	{
 		uint16 roomCnt;
 		RoomInfo roomInfos[0];
-	};
+	};	
 }
 
+// Only Has Head Packet
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::PacketHeader& packetHeader);
+
+
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserResponsePacket& chatUserRequestPacket);
+serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatRoomResponsePacket& chatUserRequestPacket);
 
 // Packet 정의할 때 패킷에 맞는 직렬화버퍼 << operator를 정의해줘야한다, PacketHeader의 사이즈 계산은 해놓은 상태여야한다!  operator << >> 는 입력 / 출력만 행할 뿐이다.
 serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserRequestPacket& chatUserRequestPacket);
 serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatRoomRequestPacket& chatRoomRequestPacket);
-serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::ChatUserResponsePacket& chatUserResponsePacket);
 
 serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::LogInRequestPacket& logInRequestPacket);
 serializationBuffer& operator<< (serializationBuffer& serialBuffer, C_Network::LogInResponsePacket& logInResponsePacket);

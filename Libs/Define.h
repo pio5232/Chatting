@@ -18,6 +18,14 @@ namespace C_Network
 	//using SharedSendBuffer = std::shared_ptr<class SendBuffer>;
 	using SharedSendBuffer = std::shared_ptr<class C_Utility::CSerializationBuffer>;
 }
+
+enum : uint
+{
+	MESSAGE_SIZE = sizeof(WCHAR),
+	USER_NAME_MAX_LEN = 20,
+	MESSAGE_MAX_LEN = 30,
+	ROOM_NAME_MAX_LEN = 20,
+}
 //using SharedIocpBase = std::shared_ptr<class C_Network::IocpObjBase>;
 
 #define TODO_TLS_LOG_ERROR

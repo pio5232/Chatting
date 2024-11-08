@@ -351,7 +351,8 @@ C_Network::NetworkErrorCode C_Network::ServerBase::ProcessRecv(Session* sessionP
 		
 		tempBuffer.MoveRearPos(header.size);
 		
-		OnRecv(tempBuffer, sessionPtr->GetId(), header.type); 
+		OnRecv(tempBuffer, sessionPtr->GetId(), header.type);
+
 		_monitor->IncRecvCount();
 	}
 
@@ -460,7 +461,7 @@ C_Network::NetworkErrorCode C_Network::ClientBase::Init()
 		return 	C_Network::NetworkErrorCode::CREATE_COMPLETION_PORT_FAILED;
 	}
 
-	if (_sessionMgr->GetMaxSessionCount() == 1)
+	if (_sessionMgr->GetMaxElemenetCount() == 1)
 		_workerThreads.reserve(1); // Only 1 Client
 	else
 		_workerThreads.reserve(concurrentThreadCnt * 2); // DummyClient
@@ -496,7 +497,7 @@ C_Network::NetworkErrorCode C_Network::ClientBase::End()
 
 C_Network::NetworkErrorCode C_Network::ClientBase::Connect()
 {
-	for (int i = 0; i < _sessionMgr->GetMaxSessionCount(); i++)
+	for (int i = 0; i < _sessionMgr->GetMaxElemenetCount(); i++)
 	{
 		SOCKET clientSock = socket(AF_INET, SOL_SOCKET, 0);
 
@@ -604,7 +605,7 @@ C_Network::NetworkErrorCode C_Network::ClientBase::ProcessRecv(Session* sessionP
 
 		tempBuffer.MoveRearPos(header.size);
 
-		//OnRecv(tempBuffer, header.type); 
+		OnRecv(tempBuffer, header.type); 
 
 		// Monitor Log
 		_monitor->IncRecvCount();

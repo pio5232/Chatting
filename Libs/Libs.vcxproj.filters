@@ -161,5 +161,8 @@
     <ClInclude Include="ServerPacketHandler.h">
       <Filter>Contents</Filter>
     </ClInclude>
+    <ClInclude Include="ErrorCode.h">
+      <Filter>Contents</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
