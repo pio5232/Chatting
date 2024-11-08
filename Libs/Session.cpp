@@ -1,6 +1,6 @@
 #include "LibsPch.h"
-#include "NetworkBase.h"
 #include "Session.h"
+#include "NetworkBase.h"
 using namespace C_Utility;
 
 C_Network::IocpEvent::IocpEvent(IocpEventType type) : _type(type), _owner(nullptr) {}

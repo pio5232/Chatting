@@ -8,6 +8,7 @@ C_Network::UserManager::UserManager(uint maxUserCnt) : C_Utility::ManagerPool<Us
 
 C_Network::UserManager::~UserManager()
 {
+	C_Utility::ManagerPool<User>::~ManagerPool();
 }
 
 C_Network::User* C_Network::UserManager::GetUser(ULONGLONG userId)

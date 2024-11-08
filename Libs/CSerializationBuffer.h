@@ -1,7 +1,4 @@
-
-#ifndef CSerialization
-#define CSerialization
-
+#pragma once
 
 namespace C_Utility
 {
@@ -92,4 +89,4 @@ namespace C_Utility
 
 
 
-#endif // !CSerialization
+//#endif // !CSerialization

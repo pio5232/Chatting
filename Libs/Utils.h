@@ -69,4 +69,8 @@ namespace C_Utility
 		uint _maxElementCnt;
 		volatile ULONG _curElementCnt;
 	};
+	template<typename T, typename ...Args>
+	ManagerPool<T, Args...>::~ManagerPool()
+	{
+	}
 }
